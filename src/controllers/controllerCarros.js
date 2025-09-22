@@ -2,6 +2,7 @@ import express from "express";
 import dados from "../models/dados.js";
 const {carros} = dados;
 
+
 const getAllCarros = (req, res) => {
     let resultado = carros;
   
@@ -9,6 +10,24 @@ const getAllCarros = (req, res) => {
       total: resultado.length,
       data: resultado,
     });
+    
+    app.get('/carros', (req, res) => {
+    const {marca, ano, preco, combustivel,} = req.query;
+    let resultado = carros;
+
+    if (marca) {
+        resultado = resultado.filter(c =>c.marca.toLowerCase() === marca.toLowerCase());
+    }
+
+    if (ano) {
+        resultado = resultado.filter(c => c.ano == ano)
+    }
+    
+    res.status(200).json({
+        total: resultado.length,
+        data: resultado
+      });
+})
   };
 
   const getCarrosById = (req, res) => {
@@ -44,6 +63,7 @@ const getAllCarros = (req, res) => {
         marca,
         modelo,
         ano: parseInt(ano),
+        cor,
         preco,
         combustivel,
         quilometragem,
@@ -60,7 +80,7 @@ const getAllCarros = (req, res) => {
   }
 
   const deleteCarro = (req, res) => {
-    const {id} = ew .params;
+    const {id} = req.params;
     
     if(isNaN(id)) {
         res.status(400).json({
@@ -97,19 +117,20 @@ const updateCarro = (req, res ) => {
 
     const idParaEditar = id;
 
-    id(isNaN(idParaEditar))
-        res.status(400).json({
-            success:false,
-            message:`O carro com o id:${idParaEditar} mão existe`,
+    if (isNaN(idParaEditar)) {
+        return res.status(400).json({
+          success: false,
+          message: `O carro com o id:${idParaEditar} não existe`,
         });
+      }
    
     const carroAtualizados = carros.map((carro) =>
-    c.id === idParaEditar ? {
+    carro.id === idParaEditar ? {
         ...carro,
         ...(marca && {marca}),
         ...(modelo && {modelo}),
         ...(ano && { ano : parseInt(ano)}),
-        ...(cor && {ano} ),
+        ...(cor && {cor} ),
         ...(preco && {preco}),
         ...(combustivel && {combustivel}),
         ...(quilometragem && {quilometragem}),        
