@@ -80,6 +80,53 @@ const getAllCarros = (req, res) => {
         });
     }
 
-    
+    const carrosFiltrados = carros.filter(c => c.id !== idParaApagar);
 
+    carros.splice(0, carros.length, ...carrosFiltrados);
+
+    res.status(200).json({
+        success: true,
+        message: `Carro ${carroParaRemover.marca} id:${id} foi removido`,
+        carroRemovido: carroParaRemover,
+    });
   }
+
+const updateCarro = (req, res ) => {
+    const id = parseInt(req.params.id);
+    const {marca, modelo, ano, cor, preco, combustivel, quilometragem} = req.body;
+
+    const idParaEditar = id;
+
+    id(isNaN(idParaEditar))
+        res.status(400).json({
+            success:false,
+            message:`O carro com o id:${idParaEditar} mão existe`,
+        });
+   
+    const carroAtualizados = carros.map((carro) =>
+    c.id === idParaEditar ? {
+        ...carro,
+        ...(marca && {marca}),
+        ...(modelo && {modelo}),
+        ...(ano && { ano : parseInt(ano)}),
+        ...(cor && {ano} ),
+        ...(preco && {preco}),
+        ...(combustivel && {combustivel}),
+        ...(quilometragem && {quilometragem}),        
+        
+    }
+    :carro
+);
+
+carros.splice(0, carros.length, ...carroAtualizados);
+
+const carroEditado = carros.find(c => c.id === idParaEditar);
+res.status(200).json({
+    success: true,
+    message: "Dados atualizados com sucesso",
+    carro: carroEditado,
+});
+
+}
+
+export { getAllCarros, getCarrosById, createCarro, deleteCarro, updateCarro };
